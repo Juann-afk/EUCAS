@@ -1,0 +1,32 @@
+{
+    "name": "EUCAS - Control de Inventario",
+    "short_name": "EUCAS",
+    "description": "Control de inventario, producción y ventas de EUCAS, miel de páramo.",
+    "lang": "es-CO",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#FEF3DA",
+    "theme_color": "#666746",
+    "icons": [
+        {
+            "src": "icono-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icono-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icono-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

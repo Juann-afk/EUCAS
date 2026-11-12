@@ -1,0 +1,2132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EUCAS - Control de Inventario</title>
+
+    <!-- Aplicación web instalable (celular y computador) -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#666746">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- iPhone: ícono y nombre al "Agregar a inicio" -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="EUCAS">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="stylesheet" href="estilos.css?v=5">
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <!-- =====================================================
+         MENÚ LATERAL
+    ====================================================== -->
+
+    <aside class="barra-lateral">
+
+        <header>
+            <h1>EUCAS</h1>
+            <p>Control de Inventario</p>
+        </header>
+
+        <nav>
+
+            <p class="grupo-menu">Día a día</p>
+            <button onclick="mostrarSeccion('inicio')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Inicio</span></button>
+            <button onclick="mostrarSeccion('ventas')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6.2"/></svg><span>Ventas</span></button>
+            <button onclick="mostrarSeccion('produccion')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="8" width="12" height="13" rx="3"/><path d="M8 3h8v5H8z"/><path d="M9 14h6"/></svg><span>Producción</span></button>
+            <button onclick="mostrarSeccion('compras')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z"/><path d="M13 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span>Compras</span></button>
+
+            <p class="grupo-menu">Inventario</p>
+            <button onclick="mostrarSeccion('inventario')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><span>Productos e insumos</span></button>
+            <button onclick="mostrarSeccion('canecas')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="2.5"/><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg><span>Canecas de miel</span></button>
+            <button onclick="mostrarSeccion('ajustes')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Ajustes</span></button>
+
+            <p class="grupo-menu">Consultas</p>
+            <button onclick="mostrarSeccion('kardex')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2"/><path d="M9 10h6M9 14h6M9 18h4"/></svg><span>Kardex</span></button>
+            <button onclick="mostrarSeccion('reportes')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><rect x="5" y="12" width="3" height="9"/><rect x="10.5" y="5" width="3" height="16"/><rect x="16" y="9" width="3" height="12"/></svg><span>Reportes</span></button>
+            <button onclick="mostrarSeccion('terceros')"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.2c2.8.3 5 2.3 5 5.3"/></svg><span>Terceros</span></button>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- Fondo oscuro detrás del menú en el celular -->
+    <div class="fondo-menu" onclick="alternarMenu(false)"></div>
+
+
+    <div class="area-principal">
+
+        <!-- Barra superior solo en celular -->
+        <div class="barra-movil">
+
+            <button
+                type="button"
+                class="boton-menu"
+                onclick="alternarMenu()"
+            >
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menú</span>
+            </button>
+
+            <span class="marca-movil">EUCAS</span>
+
+        </div>
+
+    <main>
+
+        <div class="encabezado-pagina">
+            <h1 id="tituloSeccion">Inicio</h1>
+            <p id="descripcionSeccion"></p>
+        </div>
+
+        <!-- =====================================================
+             INICIO
+        ====================================================== -->
+
+        <section id="seccionInicio" class="seccion">
+
+            <!-- Instalar como aplicación (solo aparece cuando se puede) -->
+            <div id="tarjetaInstalar" class="tarjeta-instalar" hidden>
+
+                <div>
+                    <strong>Instala EUCAS en este dispositivo</strong>
+                    <p id="textoInstalar">
+                        Queda como una aplicación, con su ícono, y funciona sin internet.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="botonInstalar"
+                    onclick="instalarAplicacion()"
+                >
+                    Instalar
+                </button>
+
+            </div>
+
+            <h2>¿Qué quieres hacer?</h2>
+
+            <div class="acciones-rapidas">
+
+                <button
+                    type="button"
+                    class="accion-rapida"
+                    onclick="mostrarSeccion('ventas')"
+                >
+                    <span class="icono-grande"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11l2-8H6.2"/></svg></span>
+                    <span>
+                        <strong>Registrar una venta</strong>
+                        <small>Un pedido y su pago</small>
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    class="accion-rapida"
+                    onclick="mostrarSeccion('produccion')"
+                >
+                    <span class="icono-grande"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="8" width="12" height="13" rx="3"/><path d="M8 3h8v5H8z"/><path d="M9 14h6"/></svg></span>
+                    <span>
+                        <strong>Registrar producción</strong>
+                        <small>Lo que envasaste hoy</small>
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    class="accion-rapida"
+                    onclick="mostrarSeccion('compras')"
+                >
+                    <span class="icono-grande"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2z"/><path d="M13 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span>
+                    <span>
+                        <strong>Registrar una compra</strong>
+                        <small>Insumos o canecas</small>
+                    </span>
+                </button>
+
+                <button
+                    type="button"
+                    class="accion-rapida"
+                    onclick="mostrarSeccion('ajustes')"
+                >
+                    <span class="icono-grande"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+                    <span>
+                        <strong>Ajustar inventario</strong>
+                        <small>Roturas, regalos o conteo</small>
+                    </span>
+                </button>
+
+            </div>
+
+            <h2>Resumen del inventario</h2>
+
+            <div class="tarjetas">
+
+                <div class="tarjeta">
+                    <span class="tarjeta-icono"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="2.5"/><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg></span>
+                    <h3>Canecas</h3>
+                    <strong id="totalCanecasInicio">0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <span class="tarjeta-icono"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></span>
+                    <h3>Productos</h3>
+                    <strong id="totalProductosInicio">0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <span class="tarjeta-icono"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg></span>
+                    <h3>Stock bajo</h3>
+                    <strong id="totalStockBajoInicio">0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <span class="tarjeta-icono"><svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>
+                    <h3>Ventas</h3>
+                    <strong id="totalVentasInicio">$0</strong>
+                </div>
+
+            </div>
+
+            <div class="inventario" style="margin-bottom: 30px;">
+
+                <h2>Alertas</h2>
+
+                <div id="alertasInicio"></div>
+
+            </div>
+
+            <div class="inventario">
+
+                <h2>Inventario actual</h2>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaInventario"></tbody>
+
+                </table>
+
+            </div>
+
+            <div class="formulario" style="margin-top: 30px;">
+
+                <h2>Respaldo de datos</h2>
+
+                <p id="estadoRespaldo" style="color: #6F6552;"></p>
+
+                <div class="acciones-formulario">
+
+                    <button
+                        type="button"
+                        onclick="exportarRespaldo()"
+                    >
+                        Exportar respaldo
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="document.getElementById('archivoRespaldo').click()"
+                    >
+                        Importar respaldo
+                    </button>
+
+                </div>
+
+                <input
+                    type="file"
+                    id="archivoRespaldo"
+                    accept=".json,application/json"
+                    style="display: none;"
+                    onchange="importarRespaldo(event)"
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             INVENTARIO / PRODUCTOS
+        ====================================================== -->
+
+        <section id="seccionProductos" class="seccion">
+
+            <h2>Registrar producto</h2>
+
+            <div class="formulario">
+
+                <input type="hidden" id="idProductoEditando" value="">
+
+                <div class="campo">
+
+                    <label>Nombre del producto</label>
+
+                    <input
+                        type="text"
+                        id="nombreProducto"
+                        placeholder="Ej: MIEL DE PÁRAMO ANDINO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo</label>
+
+                    <select id="tipoProducto">
+
+                        <option value="PRODUCTO TERMINADO">
+                            PRODUCTO TERMINADO
+                        </option>
+
+                        <option value="INSUMO">
+                            INSUMO
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Unidad</label>
+
+                    <select id="unidadProducto">
+
+                        <option value="UNIDAD">
+                            UNIDAD
+                        </option>
+
+                        <option value="GR">
+                            GR
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Stock inicial</label>
+
+                    <input
+                        type="number"
+                        id="stockProducto"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Stock mínimo</label>
+
+                    <input
+                        type="number"
+                        id="stockMinimo"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        id="botonProducto"
+                        onclick="registrarProducto()"
+                    >
+                        Registrar producto
+                    </button>
+
+                    <button
+                        id="botonCancelarProducto"
+                        onclick="cancelarEdicionProducto()"
+                        style="display: none;"
+                    >
+                        Cancelar edición
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CANECAS
+        ====================================================== -->
+
+        <section id="seccionCanecas" class="seccion">
+
+            <h2>Gestión de Canecas</h2>
+
+            <div class="formulario">
+
+                <input type="hidden" id="idCanecaEditando" value="">
+
+                <div class="campo">
+
+                    <label>ID de Caneca</label>
+
+                    <input
+                        type="text"
+                        id="idCaneca"
+                        placeholder="Ej: C001"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo de miel</label>
+
+                    <input
+                        type="text"
+                        id="tipoMielCaneca"
+                        placeholder="Ej: MIEL DE PÁRAMO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Peso inicial (kg)</label>
+
+                    <input
+                        type="number"
+                        id="pesoCaneca"
+                        min="0"
+                        step="0.001"
+                        placeholder="Ej: 30"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Costo por gramo</label>
+
+                    <input
+                        type="number"
+                        id="costoGramo"
+                        min="0"
+                        step="0.001"
+                        placeholder="Ej: 2000"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Proveedor</label>
+
+                    <input
+                        type="text"
+                        id="proveedorCaneca"
+                        placeholder="Nombre del proveedor"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        id="botonCaneca"
+                        onclick="registrarCaneca()"
+                    >
+                        Registrar caneca
+                    </button>
+
+                    <button
+                        id="botonCancelarCaneca"
+                        onclick="cancelarEdicionCaneca()"
+                        style="display: none;"
+                    >
+                        Cancelar edición
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Canecas registradas</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo de miel</th>
+                            <th>Peso inicial</th>
+                            <th>Disponible</th>
+                            <th>Costo/g</th>
+                            <th>Proveedor</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaCanecas"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             INSUMOS
+        ====================================================== -->
+
+        <section id="seccionInsumos" class="seccion">
+
+            <h2>Registro de Insumos</h2>
+
+            <div class="formulario">
+
+                <input type="hidden" id="idInsumoEditando" value="">
+
+                <div class="campo">
+
+                    <label>Nombre del insumo</label>
+
+                    <input
+                        type="text"
+                        id="nombreInsumo"
+                        placeholder="Ej: TARRO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Unidad</label>
+
+                    <select id="unidadInsumo">
+
+                        <option value="UNIDAD">
+                            UNIDAD
+                        </option>
+
+                        <option value="GR">
+                            GR
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Stock inicial</label>
+
+                    <input
+                        type="number"
+                        id="stockInsumo"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Stock mínimo</label>
+
+                    <input
+                        type="number"
+                        id="stockMinimoInsumo"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Costo promedio</label>
+
+                    <input
+                        type="number"
+                        id="costoInsumo"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        id="botonInsumo"
+                        onclick="registrarInsumo()"
+                    >
+                        Registrar insumo
+                    </button>
+
+                    <button
+                        id="botonCancelarInsumo"
+                        onclick="cancelarEdicionInsumo()"
+                        style="display: none;"
+                    >
+                        Cancelar edición
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Insumos disponibles</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Insumo</th>
+                            <th>Unidad</th>
+                            <th>Stock</th>
+                            <th>Stock mínimo</th>
+                            <th>Costo promedio</th>
+                            <th>Costo total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaInsumos"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TERCEROS
+        ====================================================== -->
+
+        <section id="seccionTerceros" class="seccion">
+
+            <h2>Registro de Terceros</h2>
+
+            <div class="formulario">
+
+                <input type="hidden" id="idTerceroEditando" value="">
+
+                <div class="campo">
+
+                    <label>Nombre</label>
+
+                    <input
+                        type="text"
+                        id="nombreTercero"
+                        placeholder="Ej: APIARIOS DEL PÁRAMO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Teléfono</label>
+
+                    <input
+                        type="text"
+                        id="telefonoTercero"
+                        placeholder="Ej: 3001234567"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Contacto</label>
+
+                    <input
+                        type="text"
+                        id="contactoTercero"
+                        placeholder="Nombre de la persona de contacto"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo</label>
+
+                    <select id="tipoTercero">
+
+                        <option value="PROVEEDOR">
+                            PROVEEDOR
+                        </option>
+
+                        <option value="DISTRIBUIDOR">
+                            DISTRIBUIDOR
+                        </option>
+
+                        <option value="EVENTO">
+                            EVENTO
+                        </option>
+
+                        <option value="DIRECTO">
+                            DIRECTO
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        id="botonTercero"
+                        onclick="registrarTercero()"
+                    >
+                        Registrar tercero
+                    </button>
+
+                    <button
+                        id="botonCancelarTercero"
+                        onclick="cancelarEdicionTercero()"
+                        style="display: none;"
+                    >
+                        Cancelar edición
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Terceros registrados</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Contacto</th>
+                            <th>Tipo</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaTerceros"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             COMPRAS
+        ====================================================== -->
+
+        <section id="seccionCompras" class="seccion">
+
+            <h2>Registro de Compras</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Fecha</label>
+
+                    <input
+                        type="date"
+                        id="fechaCompra"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Proveedor</label>
+
+                    <select id="proveedorCompra">
+
+                        <option value="">
+                            Seleccione un proveedor
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo de compra</label>
+
+                    <select
+                        id="tipoCompra"
+                        onchange="cambiarTipoCompra()"
+                    >
+
+                        <option value="INSUMO">
+                            INSUMO
+                        </option>
+
+                        <option value="CANECA">
+                            CANECA
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div id="formCompraInsumo">
+
+                    <div class="campo">
+
+                        <label>Insumo</label>
+
+                        <select id="insumoCompra">
+
+                            <option value="">
+                                Seleccione un insumo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>Cantidad</label>
+
+                        <input
+                            type="number"
+                            id="cantidadCompra"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Ej: 100"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>Costo unitario</label>
+
+                        <input
+                            type="number"
+                            id="costoUnitarioCompra"
+                            min="0"
+                            step="0.01"
+                            placeholder="Ej: 300"
+                            oninput="calcularTotalCompra()"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="formCompraCaneca"
+                    style="display: none;"
+                >
+
+                    <div class="campo">
+
+                        <label>ID de Caneca</label>
+
+                        <input
+                            type="text"
+                            id="idCanecaCompra"
+                            placeholder="Ej: C001"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>Tipo de miel</label>
+
+                        <input
+                            type="text"
+                            id="tipoMielCompra"
+                            placeholder="Ej: MIEL DE PÁRAMO"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>Peso de la caneca (kg)</label>
+
+                        <input
+                            type="number"
+                            id="pesoCanecaCompra"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Ej: 30"
+                            oninput="calcularTotalCompraCaneca()"
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label>Costo por gramo</label>
+
+                        <input
+                            type="number"
+                            id="costoGramoCompra"
+                            min="0"
+                            step="0.01"
+                            placeholder="Ej: 2000"
+                            oninput="calcularTotalCompraCaneca()"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Total de la compra</label>
+
+                    <input
+                        type="number"
+                        id="totalCompra"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button onclick="registrarCompra()">
+                        Registrar compra
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="tarjetas">
+
+                <div class="tarjeta">
+                    <h3>Total de compras</h3>
+                    <strong id="totalComprasRegistradas">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Compras de insumos</h3>
+                    <strong id="totalComprasInsumos">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Compras de canecas</h3>
+                    <strong id="totalComprasCanecas">$0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Historial de Compras</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Proveedor</th>
+                            <th>Tipo</th>
+                            <th>Producto / Caneca</th>
+                            <th>Cantidad</th>
+                            <th>Costo unitario</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaCompras"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PRODUCCIÓN
+        ====================================================== -->
+
+        <section id="seccionProduccion" class="seccion">
+
+            <h2>Registro de Producción</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Fecha</label>
+
+                    <input
+                        type="date"
+                        id="fechaProduccion"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Producto terminado</label>
+
+                    <select
+                        id="productoProduccion"
+                        onchange="mostrarResumenProduccion()"
+                    >
+
+                        <option value="">
+                            Seleccione un producto
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Cantidad a producir</label>
+
+                    <input
+                        type="number"
+                        id="cantidadProduccion"
+                        min="1"
+                        step="1"
+                        placeholder="Ej: 10"
+                        oninput="mostrarResumenProduccion()"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Lote</label>
+
+                    <input
+                        type="text"
+                        id="loteProduccion"
+                        placeholder="Vacío = se asigna automáticamente"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Fecha de vencimiento</label>
+
+                    <input
+                        type="date"
+                        id="vencimientoProduccion"
+                    >
+
+                </div>
+
+
+                <div
+                    id="resumenProduccion"
+                    class="inventario"
+                    style="margin-top: 20px; display: none;"
+                >
+
+                    <h3>Materiales necesarios</h3>
+
+                    <div id="detalleProduccion"></div>
+
+                    <hr style="margin: 20px 0;">
+
+                    <strong>
+                        Costo estimado de producción:
+                        <span id="costoProduccion">$0</span>
+                    </strong>
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button onclick="registrarProduccion()">
+                        Registrar producción
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Historial de Producción</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Lote</th>
+                            <th>Vencimiento</th>
+                            <th>Cantidad</th>
+                            <th>Costo unitario</th>
+                            <th>Costo total</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaProduccion"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RECETAS
+        ====================================================== -->
+
+        <section id="seccionRecetas" class="seccion">
+
+            <h2>Registro de Recetas</h2>
+
+            <div class="formulario">
+
+                <input
+                    type="hidden"
+                    id="idRecetaEditando"
+                    value=""
+                >
+
+
+                <div class="campo">
+
+                    <label>Producto terminado</label>
+
+                    <input
+                        type="text"
+                        id="productoReceta"
+                        placeholder="Ej: MIEL DE PÁRAMO ANDINO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo de componente</label>
+
+                    <select id="tipoComponente">
+
+                        <option value="MIEL">
+                            MIEL
+                        </option>
+
+                        <option value="INSUMO">
+                            INSUMO
+                        </option>
+
+                        <option value="PRODUCTO">
+                            PRODUCTO TERMINADO
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Insumo / Tipo de miel</label>
+
+                    <input
+                        type="text"
+                        id="componenteReceta"
+                        placeholder="Ej: MIEL DE PÁRAMO / TARRO"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Cantidad por unidad</label>
+
+                    <input
+                        type="number"
+                        id="cantidadReceta"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="Ej: 317"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        id="botonReceta"
+                        onclick="registrarReceta()"
+                    >
+                        Agregar componente
+                    </button>
+
+
+                    <button
+                        id="botonCancelarReceta"
+                        onclick="cancelarEdicionReceta()"
+                        style="display: none;"
+                    >
+                        Cancelar edición
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Recetas registradas</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Insumo / Tipo de miel</th>
+                            <th>Cantidad por unidad</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaRecetas"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             VENTAS
+        ====================================================== -->
+
+        <section id="seccionVentas" class="seccion">
+
+            <h2>Registro de Ventas</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Fecha</label>
+
+                    <input
+                        type="date"
+                        id="fechaVenta"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Producto terminado</label>
+
+                    <select
+                        id="productoVenta"
+                        onchange="calcularTotalesVenta()"
+                    >
+
+                        <option value="">
+                            Seleccione un producto
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Destino / Tercero</label>
+
+                    <select id="terceroVenta">
+
+                        <option value="">
+                            Seleccione un destino
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Cantidad</label>
+
+                    <input
+                        type="number"
+                        id="cantidadVenta"
+                        min="1"
+                        step="1"
+                        placeholder="Ej: 5"
+                        oninput="calcularTotalesVenta()"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Precio unitario</label>
+
+                    <input
+                        type="number"
+                        id="precioVenta"
+                        min="0"
+                        step="1"
+                        placeholder="Ej: 25000"
+                        oninput="calcularTotalesVenta()"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button
+                        type="button"
+                        onclick="agregarLineaVenta()"
+                    >
+                        Agregar producto al pedido
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="pedidoVenta"
+                    style="display: none; margin-top: 20px;"
+                >
+
+                    <h3>Productos del pedido</h3>
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tablaPedidoVenta"></tbody>
+
+                    </table>
+
+                    <p style="margin-top: 10px; color: #6F6552;">
+                        Si deja un producto seleccionado arriba sin agregarlo,
+                        también se incluye al registrar la venta.
+                    </p>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Empaque de envío</label>
+
+                    <select
+                        id="empaqueVenta"
+                        onchange="calcularTotalesVenta()"
+                    >
+
+                        <option value="NINGUNO">
+                            SIN EMPAQUE
+                        </option>
+
+                        <option value="BOLSA">
+                            BOLSA
+                        </option>
+
+                        <option value="CAJA">
+                            CAJA DE ENVÍO
+                        </option>
+
+                        <option value="CAJA_BOLSA">
+                            CAJA DE ENVÍO + BOLSA
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Cantidad de empaques (por pedido)</label>
+
+                    <input
+                        type="number"
+                        id="cantidadEmpaquesVenta"
+                        min="1"
+                        step="1"
+                        value="1"
+                        disabled
+                        oninput="calcularTotalesVenta()"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Estado de pago</label>
+
+                    <select
+                        id="estadoPagoVenta"
+                        onchange="cambiarEstadoPagoVenta()"
+                    >
+
+                        <option value="PAGADO">
+                            PAGADO
+                        </option>
+
+                        <option value="PENDIENTE">
+                            PENDIENTE (CRÉDITO)
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="grupoAbonoVenta"
+                    style="display: none;"
+                >
+
+                    <div class="campo">
+
+                        <label>Abono inicial</label>
+
+                        <input
+                            type="number"
+                            id="abonoInicialVenta"
+                            min="0"
+                            step="1"
+                            value="0"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Resumen claro del pedido (lo llena actualizarResumenVenta) -->
+                <div id="resumenVenta" class="resumen-venta"></div>
+
+
+                <!-- Campos calculados: se usan internamente -->
+                <div class="campos-calculados">
+
+                <div class="campo">
+
+                    <label>Total venta</label>
+
+                    <input
+                        type="number"
+                        id="totalVenta"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Costo unitario</label>
+
+                    <input
+                        type="number"
+                        id="costoUnitarioVenta"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Costo total</label>
+
+                    <input
+                        type="number"
+                        id="costoTotalVenta"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Ganancia</label>
+
+                    <input
+                        type="number"
+                        id="gananciaVenta"
+                        readonly
+                    >
+
+                </div>
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button onclick="registrarVenta()">
+                        Registrar venta
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="tarjetas">
+
+                <div class="tarjeta">
+                    <h3>Total ventas</h3>
+                    <strong id="totalVentasRegistradas">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Costo de ventas</h3>
+                    <strong id="totalCostoVentas">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Ganancia</h3>
+                    <strong id="totalGananciaVentas">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Unidades vendidas</h3>
+                    <strong id="totalUnidadesVendidas">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Historial de Ventas</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Pedido</th>
+                            <th>Destino / Tercero</th>
+                            <th>Total venta</th>
+                            <th>Ganancia</th>
+                            <th>Pago</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaVentas"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="inventario" style="margin-top: 30px;">
+
+                <h2>Cuentas por cobrar</h2>
+
+                <p style="margin-bottom: 15px;">
+                    Total por cobrar:
+                    <strong id="totalPorCobrar">$0</strong>
+                </p>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Destino / Tercero</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Pagado</th>
+                            <th>Saldo</th>
+                            <th>Registrar pago</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaCuentasCobrar"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             AJUSTES DE INVENTARIO
+        ====================================================== -->
+
+        <section id="seccionAjustes" class="seccion">
+
+            <h2>Ajustes de Inventario</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Fecha</label>
+
+                    <input
+                        type="date"
+                        id="fechaAjuste"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo de ítem</label>
+
+                    <select
+                        id="tipoItemAjuste"
+                        onchange="cargarItemsAjuste()"
+                    >
+
+                        <option value="PRODUCTO">
+                            PRODUCTO
+                        </option>
+
+                        <option value="INSUMO">
+                            INSUMO
+                        </option>
+
+                        <option value="CANECA">
+                            CANECA
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Ítem</label>
+
+                    <select
+                        id="itemAjuste"
+                        onchange="mostrarInfoItemAjuste()"
+                    >
+
+                        <option value="">
+                            Seleccione un ítem
+                        </option>
+
+                    </select>
+
+                    <p
+                        id="infoItemAjuste"
+                        style="margin-top: 8px; color: #6F6552;"
+                    ></p>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Tipo de ajuste</label>
+
+                    <select
+                        id="tipoAjuste"
+                        onchange="mostrarInfoItemAjuste()"
+                    >
+
+                        <option value="ROTURA">
+                            ROTURA / DAÑO
+                        </option>
+
+                        <option value="MUESTRA">
+                            MUESTRA O REGALO
+                        </option>
+
+                        <option value="MERMA">
+                            MERMA
+                        </option>
+
+                        <option value="VENCIMIENTO">
+                            VENCIMIENTO
+                        </option>
+
+                        <option value="CONTEO">
+                            CONTEO FÍSICO
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label id="etiquetaCantidadAjuste">Cantidad a descontar</label>
+
+                    <input
+                        type="number"
+                        id="cantidadAjuste"
+                        min="0"
+                        step="0.01"
+                        placeholder="Ej: 2"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Observación</label>
+
+                    <input
+                        type="text"
+                        id="observacionAjuste"
+                        placeholder="Ej: tarro roto en el envío"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button onclick="registrarAjuste()">
+                        Registrar ajuste
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Historial de Ajustes</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Ítem</th>
+                            <th>Tipo de ajuste</th>
+                            <th>Antes</th>
+                            <th>Ajuste</th>
+                            <th>Después</th>
+                            <th>Valor</th>
+                            <th>Observación</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaAjustes"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             KARDEX
+        ====================================================== -->
+
+        <section id="seccionKardex" class="seccion">
+
+            <h2>Kardex</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Tipo de ítem</label>
+
+                    <select
+                        id="tipoItemKardex"
+                        onchange="cargarItemsKardex()"
+                    >
+
+                        <option value="PRODUCTO">
+                            PRODUCTO
+                        </option>
+
+                        <option value="INSUMO">
+                            INSUMO
+                        </option>
+
+                        <option value="CANECA">
+                            CANECA
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Ítem</label>
+
+                    <select
+                        id="itemKardex"
+                        onchange="mostrarKardex()"
+                    >
+
+                        <option value="">
+                            Seleccione un ítem
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Desde (opcional)</label>
+
+                    <input
+                        type="date"
+                        id="desdeKardex"
+                        onchange="mostrarKardex()"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Hasta (opcional)</label>
+
+                    <input
+                        type="date"
+                        id="hastaKardex"
+                        onchange="mostrarKardex()"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Movimientos</h2>
+
+                <p
+                    id="resumenKardex"
+                    style="margin-bottom: 15px; color: #6F6552;"
+                ></p>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Movimiento</th>
+                            <th>Referencia</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Saldo</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaKardex"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REPORTES
+        ====================================================== -->
+
+        <section id="seccionReportes" class="seccion">
+
+            <h2>Reportes</h2>
+
+            <div class="formulario">
+
+                <div class="campo">
+
+                    <label>Desde</label>
+
+                    <input
+                        type="date"
+                        id="desdeReporte"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label>Hasta</label>
+
+                    <input
+                        type="date"
+                        id="hastaReporte"
+                    >
+
+                </div>
+
+
+                <div class="acciones-formulario">
+
+                    <button onclick="mostrarReportes()">
+                        Generar reporte
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="tarjetas">
+
+                <div class="tarjeta">
+                    <h3>Ventas</h3>
+                    <strong id="repVentas">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Costo de ventas</h3>
+                    <strong id="repCosto">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Ganancia</h3>
+                    <strong id="repGanancia">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Margen</h3>
+                    <strong id="repMargen">—</strong>
+                </div>
+
+            </div>
+
+
+            <div class="tarjetas">
+
+                <div class="tarjeta">
+                    <h3>Por cobrar</h3>
+                    <strong id="repPorCobrar">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Compras</h3>
+                    <strong id="repCompras">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Costo de producción</h3>
+                    <strong id="repProduccion">$0</strong>
+                </div>
+
+                <div class="tarjeta">
+                    <h3>Pérdidas por ajustes</h3>
+                    <strong id="repPerdidas">$0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="inventario" style="margin-bottom: 30px;">
+
+                <h2>Ventas por producto</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Producto</th>
+                            <th>Unidades</th>
+                            <th>Ventas</th>
+                            <th>Costo</th>
+                            <th>Ganancia</th>
+                            <th>Margen</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaReporteProductos"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="inventario">
+
+                <h2>Ventas por canal</h2>
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Canal</th>
+                            <th>N° de ventas</th>
+                            <th>Ventas</th>
+                            <th>Costo</th>
+                            <th>Ganancia</th>
+                            <th>Margen</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaReporteCanales"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    </div>
+
+</div>
+
+
+<!-- Mensajes del sistema (reemplazan las ventanas del navegador) -->
+<div id="avisos" class="avisos" aria-live="polite"></div>
+
+
+<script src="app.js?v=8"></script>
+
+</body>
+</html>
